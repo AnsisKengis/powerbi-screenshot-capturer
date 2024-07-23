@@ -20,7 +20,12 @@ class CaptureScreenshots extends Command
     {
         $urls = [
             "powerbi_vardadienas" => "https://app.powerbi.com/view?r=eyJrIjoiNTkzNDUwOTItMjM2OS00YWZlLWExMzctYmRjYWU2YmE3ZWJkIiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9",
-            "powerbi_pardota_produkcija" => "https://app.powerbi.com/view?r=eyJrIjoiODQ2ZDVlYTctNGYwNi00MzIxLTkyMmMtOGNjOTg5MDQ3OTE4IiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9"
+            "powerbi_pardota_produkcija_menesis" => "https://app.powerbi.com/view?r=eyJrIjoiODQ2ZDVlYTctNGYwNi00MzIxLTkyMmMtOGNjOTg5MDQ3OTE4IiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9",
+            "powerbi_pardota_produkcija_nedela" => "https://app.powerbi.com/view?r=eyJrIjoiOTdiZWQ4ZWUtNDNhMC00ZDUwLThkODgtZmJiMWFhNTQxNjdhIiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9",
+            "powerbi_pardota_produkcija_diena" => "https://app.powerbi.com/view?r=eyJrIjoiNGEzNjk1ZTUtZmQ2NS00YTVlLTljODAtMjE1OWVkNmE0MWFlIiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9",
+            "powerbi_pardota_produkcija_mebelu_cehs" => "https://app.powerbi.com/view?r=eyJrIjoiYWMzOWNmNzMtZDlhYy00YWMwLWI0ZjMtZjc5M2QzOTQzZDU5IiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9",
+            "powerbi_saimnieciska_darbiba" => "https://app.powerbi.com/view?r=eyJrIjoiOGViMmE2YTktMjkwNi00ODE4LWJlMzktMDg4MzVlNTZhZTNkIiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9",
+            "powerbi_sarazota_produkcija_pa_mainam" => "https://app.powerbi.com/view?r=eyJrIjoiNDg4MmMxZjItNTdjNy00ZjIwLWJlYTctNjgyZDM0YWEyOTQ5IiwidCI6ImE2YzkwNzQ3LTFiOWYtNDkyYi1iYzE3LTQ3ZTkxNGMzMmJhNyIsImMiOjh9",
         ];
 
         $storagePath = storage_path('app/public/screenshots');
@@ -31,16 +36,12 @@ class CaptureScreenshots extends Command
         }
 
         foreach ($urls as $fileName => $url) {
-            $timestamp = now()->format('Ymd-His');
-            $filename = "{$timestamp}_" . parse_url($url, PHP_URL_QUERY) . ".png";
+            $filename = "{$fileName}.png";
             $filePath = $storagePath . '/' . $filename;
 
             Browsershot::url($url)
                 ->waitUntilNetworkIdle()
                 ->save($filePath);
-
-            // Save to S3 if needed
-            // Storage::disk('s3')->put("screenshots/{$filename}", file_get_contents($filePath));
         }
 
         $this->info('Screenshots captured successfully!');
