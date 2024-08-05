@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Spatie\Browsershot\Browsershot;
-use Illuminate\Support\Facades\Storage;
 
 class CaptureScreenshots extends Command
 {
