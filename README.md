@@ -15,8 +15,10 @@ Instructions:
 3. Run:
    npm install puppeteer
 
-4. Run this command to create screenshots:
+4. php artisan serve to run frontend
+
+5. Run this command to create screenshots:
    php artisan screenshots:capture
 
-5. Create cron scheduler to run this every 5 minutes:
+6. Create cron scheduler to run this every 5 minutes:
    _/5 _ \* \* \* cd /path/to/your/project && php artisan screenshots:capture >> /dev/null 2>&1

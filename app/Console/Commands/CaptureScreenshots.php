@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Spatie\Browsershot\Browsershot;
+use App\Models\ScreenshotUrl;
 
 class CaptureScreenshots extends Command
 {
@@ -19,35 +20,40 @@ class CaptureScreenshots extends Command
     {
         $storagePath = storage_path('app/public/screenshots');
 
+        // Ensure the directory exists
         if (!is_dir($storagePath)) {
             mkdir($storagePath, 0755, true);
+        } else {
+            // Delete all existing screenshots
+            $this->deleteExistingScreenshots($storagePath);
+            $this->info('All existing screenshots deleted successfully!');
         }
 
-        $filePath = storage_path('app/urls.txt');
-        $urls = $this->parseUrlsFromFile($filePath);
+        $urls = ScreenshotUrl::all();
 
-        foreach ($urls as $filename => $url) {
-            $filename = "{$filename}.png";
+        foreach ($urls as $urlEntry) {
+            $filename = "{$urlEntry->name}.png";
             $filePath = $storagePath . '/' . $filename;
 
-            Browsershot::url($url)
+            Browsershot::url($urlEntry->url)
                 ->waitUntilNetworkIdle()
                 ->save($filePath);
 
             $this->info('Screenshot ' . $filename . ' captured successfully!');
         }
 
-        $this->info('Screenshots captured successfully!');
+        $this->info('All screenshots captured successfully!');
     }
 
-    private function parseUrlsFromFile($filePath)
+    private function deleteExistingScreenshots($directory)
     {
-        $urls = [];
-        $fileLines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        foreach ($fileLines as $line) {
-            [$key, $url] = explode('=', $line, 2);
-            $urls[$key] = $url;
+        // Get all PNG files in the directory
+        $files = glob($directory . '/*.png');
+
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file); // Delete the file
+            }
         }
-        return $urls;
     }
 }
